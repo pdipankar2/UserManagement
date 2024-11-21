@@ -8,3 +8,6 @@ insert into city values(5,'provident',3);
 insert into city values(6,'New Port',3);
 insert into city values(7,'Trenton',4);
 insert into city values(8,'Newrk',4);
+
+insert into state values(1,1,'WB');
+insert into state values(2,1,'MH')

@@ -11,83 +11,62 @@
 
 
 <script>
-	$(document).ready(function() {
+$(document).ready(function () {
+    // When the country dropdown changes
+    $('#countryDropdown').change(function () {
+        const countryId = $(this).val(); // Get the selected country ID
+        const stateDropdown = $('#stateDropdown');
+        const cityDropdown = $('#cityDropdown');
 
-		$("#countryId").on("change", function() {
-			var countryId = $("countryId").val();
-			//alert("dropdown change"+ cid);
-			
-			$('#stateId').field('optin').remove();
-        	$('<option>').val('').text('-Select-').appendTo("#stateId");
+        // Clear existing options in State and City dropdowns
+        stateDropdown.empty().append('<option value="">-Select-</option>');
+        cityDropdown.empty().append('<option value="">-Select-</option>');
 
-			
-			$.ajax({
-				type : 'GET',
-				url: '/states/' + countryId,
-				success: function(response) {
-                        console.log(response);	
-                        
-                        //iterate response entries and display as state drop down 
-                    
-                      $.each(response,function(key,value){
-                    	  
-                    	$('<option>').val(key).text(value).appendTo("#stateId");
-                    	  
-                      });
-                       
-				}
-			
-			
-			
-			});
-		});	
-		
-		
-		
-		
-		
-		$("#stateId").on("change", function() {
-			var stateId = $("stateId").val();
-			//alert("dropdown change"+ cid);
-			
-			$('#cityId').field('optin').remove();
-        	$('<option>').val('').text('-Select-').appendTo("#cityId");
+        if (countryId) {
+            // Make an Ajax call to get states for the selected country
+            $.ajax({
+                url: `/states/${countryId}`,
+                method: 'GET',
+                success: function (states) {
+                    // Populate the State dropdown
+                    $.each(states, function (key, value) {
+                        stateDropdown.append(`<option value="${key}">${value}</option>`);
+                    });
+                },
+                error: function () {
+                    alert('Failed to load states. Please try again.');
+                }
+            });
+        }
+    });
 
-			
-			$.ajax({
-				type : 'GET',
-				url: '/cities/' + stateId,
-				success: function(response) {
-                        console.log(response);	
-                        
-                        //iterate response entries and display as state drop down 
-                    
-                      $.each(response,function(key,value){
-                    	  
-                    	$('<option>').val(key).text(value).appendTo("#cityId");
-                    	  
-                      });
-                       
-				}
-			
-			
-			
-			});
-		});	
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+    // When the state dropdown changes
+    $('#stateDropdown').change(function () {
+        const stateId = $(this).val(); // Get the selected state ID
+        const cityDropdown = $('#cityDropdown');
 
-	});
+        // Clear existing options in City dropdown
+        cityDropdown.empty().append('<option value="">-Select-</option>');
+
+        if (stateId) {
+            // Make an Ajax call to get cities for the selected state
+            $.ajax({
+                url: `/cities/${stateId}`,
+                method: 'GET',
+                success: function (cities) {
+                    // Populate the City dropdown
+                    $.each(cities, function (key, value) {
+                        cityDropdown.append(`<option value="${key}">${value}</option>`);
+                    });
+                },
+                error: function () {
+                    alert('Failed to load cities. Please try again.');
+                }
+            });
+        }
+    });
+});
+
 </script>
 
 
@@ -142,7 +121,7 @@
 		<td>Select Country</td>
 		<td>
 		
-		  <select id="country" name="country" required th:field="*{countryId}">
+		  <select id="countryDropdown"  th:field="*{countryId}">
 				<option value="">-Select-</option>
 				<option th:each="entry : ${countries.entrySet()}" th:value="${entry.key}" th:text="${entry.value}"></option>
 			
@@ -157,10 +136,9 @@
 			<tr> 
 		<td>Select State</td>
 		<td>
-		<select  name="state" th:field="*{stateId}">
+		<select id="stateDropdown"    th:field="*{stateId}">
 				<option value="">-Select-</option>
 		 
-		 				<option th:each="entry : ${countries.entrySet()}" th:value="${entry.key}" th:text="${entry.value}"></option>
 		 
 		</select>
 		 </td>
@@ -170,9 +148,8 @@
 				<tr> 
 		<td>Select City</td>
 		<td>
-		 <select  name="city" th:field="*{cityId}">
+		 <select  id="cityDropdown"  th:field="*{cityId}">
 				<option value="">-Select-</option>
-			<option th:each="entry : ${countries.entrySet()}" th:value="${entry.key}" th:text="${entry.value}"></option>
 	
 				</select>
 		 </td>

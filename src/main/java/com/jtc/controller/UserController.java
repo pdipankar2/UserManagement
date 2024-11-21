@@ -35,14 +35,14 @@ public class UserController {
 
 
 	
-	@GetMapping("/resetpwd_Page")
-	public String loadResetPwdPage(@RequestParam("email")  String email, Model model) {
+	@GetMapping("/reset-pwd-page")
+	public String loadResetPwdPage(@RequestParam  String email, Model model) {
 
 		ResetPwdFromDTO resetPwdFromDTO = new ResetPwdFromDTO();
 		resetPwdFromDTO.setEmail(email);
 		model.addAttribute("resetPwd", resetPwdFromDTO);
 
-		return "reset-pwd";
+		return "resetPwd";
 	}
 
 	@PostMapping("/resetPwd")
@@ -52,14 +52,14 @@ public class UserController {
 		if (resetPwd) {
 			return "redirect:dashbord";
 		}
-		return "reset-pwd";
+		return "resetPwd";
 	}
 
 	
 
 	@GetMapping("/states/{countryId}") // read the data from UI
 	@ResponseBody
-	public Map<Integer, String> getStates(@PathVariable Integer countryId, Model model) {
+	public Map<Integer, String> getStates(@PathVariable Integer countryId) {
 
 		Map<Integer, String> statesMap = userService.getStates(countryId);
 
@@ -71,9 +71,9 @@ public class UserController {
 	@ResponseBody // direct send the response to the UI without any pages
 	public Map<Integer, String> getCities(@PathVariable Integer stateId, Model model) {
 
-		Map<Integer, String> citiesMap = userService.getStates(stateId);
+		Map<Integer, String> citiesMap = userService.getCities(stateId);
 
-		model.addAttribute("countries", citiesMap);
+		//model.addAttribute("countries", citiesMap);
 
 		return citiesMap;
 	}
@@ -82,10 +82,10 @@ public class UserController {
 	public String loadRegisterPage(Model model) {
 
 		Map<Integer, String> countriesMap = userService.getCountries();
+		RegisterFromDTO registerFrom = new RegisterFromDTO();
 
 		model.addAttribute("countries", countriesMap);
 
-		RegisterFromDTO registerFrom = new RegisterFromDTO();
 
 		model.addAttribute("registerFrom", registerFrom);
 
@@ -158,7 +158,7 @@ public class UserController {
 				return "redirect:dashbord";
 			} else {
 				// display reset pwd page
-				return "redirect:reset-pwd?email=" + userDTO.getEmail();
+				return "redirect:reset-pwd-page?email=" + userDTO.getEmail();
 				// return "redirect:reset_pwd";
 			}
 		}
